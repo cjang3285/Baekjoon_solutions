@@ -1,0 +1,94 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+// 이미 이전 BFS에서 색이 칠해진 정점은
+// 큐에 다시 넣어(푸시) 탐색 범위를 확장하지는 않지만,
+// 현재 정점과의 색 충돌 여부는 반드시 검사한다.
+
+// adj : 입력으로 주어진 '관계 그래프' 저장소
+// color : 방문 여부 + 이분 그룹(1/-1)을 동시에 표현
+vector<int> adj[20001];
+int color[20001];
+
+bool bfs(int start) {
+    queue<int> q;
+
+    // 탐색 시작점 start는 흰 색(1)으로 결정 → 이분 채색의 출발점
+    q.push(start);
+    color[start] = 1;
+
+    while(!q.empty()) {
+        int cur = q.front();
+        q.pop();
+        
+        // cur과 간선으로 직접 연결된 이웃 정점들 순회
+        // → 미로 문제 같은 위치 계산이 아닌, adj에 저장된 '관계' 기반 탐색
+        for(int nxt : adj[cur]) {
+            
+            // 아직 안 칠해진 정점 → 현재 정점의 반대 색 부여
+            if(color[nxt] == 0) {
+                color[nxt] = -color[cur]; // 1 => -1 / -1 => 1
+                q.push(nxt); // 그 정점이 다음부턴 현재 정점이 된다
+                // nxt는 다음에 방문할 '정점 번호'
+                // → 이 번호로 color[nxt]는 색 상태,
+                //    adj[nxt]는 그 정점의 이웃 목록에 접근
+            }
+
+            // 인접정점의 색이 현재 정점과 같은 색 
+            // → 이분그래프 조건 위반
+            else if(color[nxt] == color[cur]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    int K;
+    cin >> K;
+
+    while(K--) {
+        int V, E;
+        cin >> V >> E;
+
+        // 새 테스트케이스 시작 
+        // 이 문제의 3가지 상태인 정점번호, 간선 정보, 정점별 색 중에서
+        // → 간선/색 정보 전부 제거 / 정점번호는 변화 없음
+        for(int i=1;i<=V;i++) {
+            adj[i].clear();   // 인접 리스트 비우기. 0 채우기가 아니라 그냥 빈 리스트로 만든 것.
+            color[i] = 0;     // 아직 아무도 방문 안 한 => 색칠 안된 상태로 리셋
+        }
+
+        // 간선 입력 → 하나의 테스트케이스에서 입력받은 간선 정보들을 adj에 저장
+        for(int i=0;i<E;i++) {
+            int u, v;
+            cin >> u >> v;
+
+            // 무방향 그래프라 양쪽에 서로 추가
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+
+        // 귀류법 시행
+        // 이분그래프라 가정하고 정말 그런지 보자 
+        bool isBipartite = true;
+
+        // 그래프가 여러 덩어리일 수 있어 → 모든 정점이 시작점 후보
+        for(int i=1;i<=V;i++) {
+
+            // 아직 색이 안 칠해진 => 방문 안한 정점 i 발견 → i에서 BFS 시작
+            if(color[i] == 0) {
+                if(!bfs(i)) { // 이분 그래프가 아니면
+                    isBipartite = false; // 아니다!
+                    break; // 더 이상 탐색 필요 x
+                }
+            } 
+        }
+
+        cout << (isBipartite ? "YES\n" : "NO\n");
+    }
+}
