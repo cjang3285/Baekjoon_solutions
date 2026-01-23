@@ -53,15 +53,15 @@ int main() {
 
         // 2. 각 단에서 j*i≤x 만족 개수 세서 전부 더함
         // HowManyLeqTo(x)는 단조 증가 함수이므로 이분탐색 적용 가능
-        long long rank = HowManyLeqTo(mid);   // mid의 등수
+        long long cnt = HowManyLeqTo(mid);   // mid의 등수
 
         // 3. 그 등수가 K 이상인지 비교
-        // rank ≥ K 라는 것은
+        // cnt ≥ K 라는 것은
         // "정렬된 배열 B에서 mid의 위치가 K번째 이상"이라는 뜻이다.
         // 따라서 mid는 K번째 수이거나 그보다 큰 값 중 하나이며,
         // 우리는 그중 '최소의 mid'를 찾아야 하므로 왼쪽 탐색을 한다.
-        if (rank >= K) {
-            // rank ≥ K 인 mid는 "정렬 후 K번째 이상의 위치"를 의미하므로 정답 후보
+        if (cnt >= K) {
+            // cnt ≥ K 인 mid는 "정렬 후 K번째 이상의 위치"를 의미하므로 정답 후보
             // mid는 실제 배열 값이 아닐 수 있지만,
             // 위치 관계 판단으로는 충분하다.
             // 성공한 mid 중 최소 mid가 실제 K번째 값이다.
