@@ -2,8 +2,8 @@
 using namespace std;
 
 int gcd_of_vector(const vector<int>& diff) {
-    int result = diff[0]; // diff[0]은 더미 데이터 0이니까 패스 
-    for (size_t i = 1; i < diff.size(); i++) { // result가 이미 diff[1]로 시작하니 반복문은 i는 2로 시작
+    int result = diff[0]; 
+    for (size_t i = 1; i < diff.size(); i++) { 
         result = gcd(result, diff[i]); // gcd(a, b, c) = gcd(gcd(a, b), c) : 결합법칙 성립
     }
     return result;
@@ -19,7 +19,7 @@ int main(){
         cin >> tree[i];
     }
     
-    // diff[i] = i-1번째 나무와 i번째 나무의 간격
+    // diff[i] = i번째 나무와 i+1번째 나무의 간격 => n-1개의 간격 도출
     vector<int> diff;
     for (int i = 1; i < n; i++) {
         diff.push_back(tree[i] - tree[i - 1]);
